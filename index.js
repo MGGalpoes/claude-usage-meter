@@ -7,6 +7,7 @@ import { summary, daily, recentSessions, petState } from "./meter.js";
 import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
+import os from "node:os";
 import { fileURLToPath } from "node:url";
 
 const PERIODS = ["today", "yesterday", "week", "7d", "month", "30d", "all"];
@@ -37,6 +38,15 @@ if (process.argv[2] === "serve") {
         const tool = u.searchParams.get("tool");
         res.writeHead(200, { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" });
         res.end(JSON.stringify(await petState({ idleMinutes: idle, tools: pick(TOOLS.includes(tool) ? tool : "both") })));
+      } else if (req.url.startsWith("/api/config")) {
+        const cfgFile = path.join(os.homedir(), ".clauditchi-config.json");
+        if (req.method === "POST") {
+          let body = ""; req.on("data", (c) => (body += c)); await new Promise((r) => req.on("end", r));
+          JSON.parse(body); fs.writeFileSync(cfgFile, body);
+          res.writeHead(200, { "content-type": "application/json" }); return res.end('{"ok":true}');
+        }
+        res.writeHead(200, { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" });
+        res.end(fs.existsSync(cfgFile) ? fs.readFileSync(cfgFile) : "null");
       } else if (req.url.startsWith("/api/skins")) {
         const dir = path.join(here, "web", "skins");
         const skins = fs.existsSync(dir) ? fs.readdirSync(dir, { withFileTypes: true }).filter((d) => d.isDirectory()).map((d) => d.name) : [];

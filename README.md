@@ -72,6 +72,18 @@ Barra de energia, horas de hoje e da semana, últimos 7 dias. Os botões ◀ ▶
 
 Para gerar a partir da foto de alguém, use um modelo de edição por referência (ex.: Flux.2 Klein 4B local via Wan2GP, roda numa RTX 4060 em ~13 s por imagem) com prompts de expressão por humor. As pastas de skin ficam fora do git.
 
+## Widget flutuante (desktop)
+
+Só o personagem com um balão de fala, sempre no topo, fundo transparente (Electron). Arrasta pelo personagem, × ao passar o mouse fecha, duplo clique abre a página de personalização no navegador. Sobe o servidor sozinho se precisar.
+
+```
+npm install            # baixa o Electron (dev dependency)
+iniciar-widget.vbs     # Windows, sem console (edite o caminho dentro do .vbs)
+# ou: npx electron widget
+```
+
+A configuração (nome, cores, skin, humores) fica em `~/.clauditchi-config.json`, compartilhada entre a página no navegador e o widget. A mensagem do humor aparece dentro da telinha (página) e no balão (widget).
+
 ## Ferramentas MCP
 
 | Tool | Parâmetros | Retorna |

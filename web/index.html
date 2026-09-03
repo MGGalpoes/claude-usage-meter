@@ -17,11 +17,11 @@
   body.night{--bg1:#2a2f4a;--bg2:#141628}
   body.evening{--bg1:#f7d9b8;--bg2:#e7b58f}
   .wrap{display:flex;gap:40px;align-items:flex-start;padding:30px}
-  .device{position:relative;width:340px;height:450px;border-radius:170px 170px 150px 150px/200px 200px 170px 170px;
+  .device{position:relative;width:340px;height:480px;border-radius:170px 170px 150px 150px/200px 200px 170px 170px;
           background:linear-gradient(160deg,var(--shell),var(--shell2));
           box-shadow:0 30px 60px rgba(0,0,0,.25),inset 0 -10px 0 var(--shell-shadow),inset 0 6px 0 rgba(255,255,255,.45)}
   .device::before{content:"";position:absolute;inset:14px;border-radius:inherit;border:3px solid rgba(255,255,255,.25);pointer-events:none}
-  .screen{position:absolute;left:50%;top:60px;transform:translateX(-50%);width:240px;height:262px;border-radius:26px;
+  .screen{position:absolute;left:50%;top:60px;transform:translateX(-50%);width:240px;height:292px;border-radius:26px;
           background:var(--screen);box-shadow:inset 0 0 0 6px var(--screen-dark),inset 0 12px 24px rgba(0,0,0,.18);
           overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:10px}
   .screen .scan{position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(0,0,0,.05) 0 1px,transparent 1px 3px);pointer-events:none}
@@ -30,7 +30,7 @@
   #skinpet{display:flex;align-items:flex-end;justify-content:center;flex:none}
   #skinpet.hidden,svg.pet.hidden{display:none}
   .pet{flex:none}
-  #skinpet img{width:140px;height:140px;object-fit:contain;border-radius:20px;display:block}
+  #skinpet img{width:140px;height:140px;object-fit:contain;display:block;filter:drop-shadow(0 4px 4px rgba(0,0,0,.18))}
   .skin-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:6px}
   .skin-grid label{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;cursor:pointer;opacity:.85}
   .skin-grid img{width:60px;height:60px;object-fit:cover;border-radius:10px;background:#0001;border:1px dashed #0003}
@@ -48,7 +48,31 @@
   .buttons button:active{transform:translateY(3px);box-shadow:0 1px 0 #1c1c1c}
   .buttons button:nth-child(2){margin-top:12px}
   .brand{position:absolute;bottom:18px;width:100%;text-align:center;font-size:10px;letter-spacing:.3em;font-weight:700;color:var(--shell-shadow);opacity:.9}
-  .msg{position:absolute;top:26px;width:100%;text-align:center;font-size:11px;color:var(--shell-shadow);font-weight:600;opacity:.95;padding:0 40px}
+  .say{font-size:10.5px;line-height:1.25;text-align:center;padding:0 16px;height:28px;overflow:hidden;font-weight:600;opacity:.85;margin-top:2px}
+  .close{position:absolute;top:22px;right:34px;width:22px;height:22px;border-radius:50%;border:0;background:#0003;color:#fff;font-size:12px;cursor:pointer;display:none;line-height:22px;padding:0}
+  body.widget{background:transparent!important;place-items:start;overflow:hidden}
+  html:has(body.widget){background:transparent}
+  body.widget .wrap{padding:8px}
+  body.widget .foot,body.widget .gear{display:none}
+  body.widget .close{display:block}
+  body.widget .device{box-shadow:inset 0 -10px 0 var(--shell-shadow),inset 0 6px 0 rgba(255,255,255,.45)}
+  body.widget .close{top:40px;right:60px}
+  body.widget .close{background:#0006;-webkit-app-region:no-drag}
+  body.widget .device,body.widget .foot,body.widget .gear{display:none!important}
+  body.widget{place-items:end center}
+  #mascot{display:none;flex-direction:column;align-items:center;width:100%;padding:6px 8px 10px}
+  body.widget #mascot{display:flex}
+  #mascot .bubble{position:relative;background:#fffdf8;color:#2b3a2a;border-radius:14px;padding:8px 12px;max-width:250px;font-size:12px;line-height:1.3;
+     box-shadow:0 6px 18px rgba(0,0,0,.25);-webkit-app-region:no-drag;text-align:center;margin-bottom:12px;cursor:default}
+  #mascot .bubble::after{content:"";position:absolute;left:50%;bottom:-8px;margin-left:-8px;border:8px solid transparent;border-top-color:#fffdf8;border-bottom:0}
+  #mascot .bubble b{display:block;font-size:10px;letter-spacing:.14em;text-transform:uppercase;opacity:.7;margin-bottom:2px}
+  #mascot .bubble small{display:block;margin-top:5px;font-size:10px;opacity:.6}
+  #mascot .stage{position:relative;-webkit-app-region:drag;cursor:grab;filter:drop-shadow(0 8px 10px rgba(0,0,0,.35))}
+  #mascot .stage .pet{width:170px;height:170px;margin:0}
+  #mascot .stage #skinpet img{width:170px;height:170px;filter:none}
+  #mascot .x{position:absolute;top:0;right:-6px;width:20px;height:20px;border-radius:50%;border:0;background:#000a;color:#fff;font-size:11px;line-height:20px;padding:0;cursor:pointer;opacity:0;transition:opacity .2s;-webkit-app-region:no-drag}
+  #mascot:hover .x{opacity:1}
+  body.widget .bubble.hide{display:none}
   .foot{margin-top:22px;font-size:12px;opacity:.55;text-align:center}
   body.night .foot{color:#dfe3ff}
   .gear{position:fixed;top:16px;right:16px;width:42px;height:42px;border-radius:50%;border:0;background:#fff8;backdrop-filter:blur(6px);
@@ -111,7 +135,7 @@
 <div class="wrap">
 <div>
 <div class="device">
-  <div class="msg" id="msg">carregando…</div>
+  <button class="close" id="close" title="fechar">×</button>
   <div class="screen">
     <div class="scan"></div>
     <div class="mood" id="mood">…</div>
@@ -145,6 +169,7 @@
       </g>
     </svg>
     <div id="skinpet" class="pet hidden"><img id="skinimg" class="body" alt=""></div>
+    <div class="say" id="msg">carregando…</div>
     <div class="stats">
       <span><small>HOJE</small><span id="hoje">–</span></span>
       <span><small>SEMANA</small><span id="semana">–</span></span>
@@ -160,6 +185,7 @@
   </div>
   <div class="brand" id="brand">CLAUDITCHI</div>
 </div>
+<div id="mascot"><div class="bubble" id="bubble"><b id="m-mood"></b><span id="m-msg"></span><small id="m-stats"></small></div><div class="stage" id="stage"><button class="x" id="m-close" title="fechar">×</button></div></div>
 <div class="foot" id="foot">medindo Claude Code + Codex nesta máquina</div>
 </div>
 
@@ -205,6 +231,8 @@
 
 <script>
 const $=id=>document.getElementById(id);
+const q=new URLSearchParams(location.search);
+const WIDGET=q.has('widget');
 const show=(ids,on)=>ids.forEach(i=>$(i).classList.toggle('hidden',!on));
 const SHAPES={
   round:'M75 18c30 0 52 24 52 54 0 28-22 46-52 46S23 100 23 72c0-30 22-54 52-54z',
@@ -227,12 +255,11 @@ const DEFAULTS={
   ],
 };
 const MOOD_TITLES={fresh:'Início do dia',ok:'Ritmo',mid:'Meio cansado',tired:'Cansado',dead:'Exausto',sleep:'Dormindo (sem atividade)'};
-let cfg=loadCfg();
-function loadCfg(){
-  try{const s=JSON.parse(localStorage.getItem('clauditchi')||'null');if(s){const c={...DEFAULTS,...s};c.moods=DEFAULTS.moods.map((m,i)=>({...m,...(s.moods?.[i]||{})}));return c;}}catch{}
-  return JSON.parse(JSON.stringify(DEFAULTS));
-}
-function saveCfg(){localStorage.setItem('clauditchi',JSON.stringify(cfg));}
+function mergeCfg(s){if(!s) return JSON.parse(JSON.stringify(DEFAULTS));const c={...DEFAULTS,...s};c.moods=DEFAULTS.moods.map((m,i)=>({...m,...(s.moods?.[i]||{})}));return c;}
+let cfg=(()=>{try{return mergeCfg(JSON.parse(localStorage.getItem('clauditchi')||'null'));}catch{return mergeCfg(null);}})();
+async function loadCfgServer(){try{const r=await fetch('/api/config');const s=await r.json();if(s){cfg=mergeCfg(s);}else if(localStorage.getItem('clauditchi')){saveCfg();}}catch{}}
+function saveCfg(){try{localStorage.setItem('clauditchi',JSON.stringify(cfg));}catch{}
+  fetch('/api/config',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(cfg)}).catch(()=>{});}
 
 // --- cores derivadas
 const hex2rgb=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16));
@@ -249,7 +276,7 @@ function applyTheme(){
   $('pet').classList.toggle('no-anim',cfg.anim==='off');
   const hour=new Date().getHours();
   const auto = hour>=20||hour<6 ? 'night' : hour>=17 ? 'evening' : '';
-  document.body.className = cfg.theme==='auto' ? auto : (cfg.theme==='light' ? '' : cfg.theme);
+  document.body.className = (cfg.theme==='auto' ? auto : (cfg.theme==='light' ? '' : cfg.theme)) + (WIDGET?' widget':'');
 }
 
 // --- render do bicho
@@ -272,12 +299,14 @@ function render(s){
   $('skinimg').onerror=()=>{$('skinpet').classList.add('hidden');$('pet').classList.remove('hidden');};
   $('mood').textContent=m.label;
   $('msg').textContent=(demo?'[demo] ':'')+m.msg.replace('{h}',fmt(h)).replace('{m}',idle);
+  if(WIDGET){$('m-mood').textContent=m.label;$('m-msg').textContent=$('msg').textContent;}
   ['shape','lid1','lid2'].forEach(i=>$(i).setAttribute('fill',m.color)); $('ears').setAttribute('fill',m.color);
   show(['eyes-open','eyes-half','eyes-closed','eyes-x','mouth-smile','mouth-flat','mouth-wavy','mouth-open','tongue','sweat','fx-spark','fx-zz'],false);
   show({fresh:['eyes-open','mouth-open','fx-spark'],ok:['eyes-open','mouth-smile'],mid:['eyes-half','mouth-flat'],
         tired:['eyes-half','mouth-wavy','sweat'],dead:['eyes-x','tongue','mouth-flat','sweat'],sleep:['eyes-closed','mouth-smile','fx-zz']}[m.k],true);
   const energy=Math.max(0,Math.round(100-(h/cfg.goal)*100));
   $('energia').textContent=energy+'%';
+  if(WIDGET){$('m-stats').textContent=`hoje ${fmt(h)} · semana ${s.semanaFmt||'–'} · energia ${energy}%`;}
   const eb=$('ebar'); eb.style.width=energy+'%'; eb.style.background=energy>50?cfg.accent:energy>25?'#d9a400':'#c0392b';
   $('hoje').textContent=fmt(h); $('semana').textContent=s.semanaFmt||'–';
   const bars=$('bars'); bars.innerHTML='';
@@ -326,9 +355,18 @@ $('b-export').onclick=()=>{const a=document.createElement('a');a.href='data:appl
 $('b-import').onclick=()=>$('f-import').click();
 $('f-import').onchange=async e=>{try{const j=JSON.parse(await e.target.files[0].text());cfg={...DEFAULTS,...j};cfg.moods=DEFAULTS.moods.map((m,i)=>({...m,...(j.moods?.[i]||{})}));saveCfg();fillPanel();load();}catch{alert('JSON inválido');}};
 
-const q=new URLSearchParams(location.search);
+if(WIDGET){document.body.classList.add('widget');
+  const st=$('stage'); st.insertBefore($('skinpet'),$('m-close')); st.insertBefore($('pet'),$('m-close'));
+  $('m-close').onclick=()=>{if(window.widgetApi) widgetApi.close(); else window.close();};
+  $('bubble').addEventListener('dblclick',()=>{if(window.widgetApi) widgetApi.openSettings(); else window.open(location.origin,'_blank');});
+  $('stage').addEventListener('dblclick',()=>{if(window.widgetApi) widgetApi.openSettings(); else window.open(location.origin,'_blank');});
+  $('gear').style.display='none';
+  $('close').onclick=()=>{if(window.widgetApi) widgetApi.close(); else window.close();};
+  // duplo clique na carcaça abre a página completa (painel) no navegador
+  document.querySelector('.screen').addEventListener('dblclick',()=>{if(window.widgetApi) widgetApi.openSettings(); else window.open(location.origin,'_blank');});
+}
 if(q.has('demo')){demo={h:+q.get('demo'),idle:+(q.get('idle')||0)};}
-applyTheme(); load(); setInterval(load,30000);
+applyTheme(); loadCfgServer().then(()=>{applyTheme();load();}); setInterval(load,30000);
 </script>
 </body>
 </html>
