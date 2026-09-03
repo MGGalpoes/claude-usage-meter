@@ -1,0 +1,32 @@
+{
+  "name": "claude-usage-meter",
+  "version": "1.0.0",
+  "description": "MCP que mede horas de uso do Claude Code e do Codex a partir dos transcritos locais",
+  "type": "module",
+  "bin": {
+    "claude-usage-meter": "./index.js"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "report": "node index.js report"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "zod": "^3.23.8"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MGGalpoes/claude-usage-meter"
+  },
+  "keywords": [
+    "mcp",
+    "claude-code",
+    "codex",
+    "usage",
+    "time-tracking"
+  ],
+  "engines": {
+    "node": ">=18"
+  }
+}
