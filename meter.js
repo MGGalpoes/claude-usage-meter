@@ -235,3 +235,31 @@ export async function recentSessions({ limit = 15, tools = ["claude", "codex"], 
   out.sort((a, b) => b.fim.localeCompare(a.fim));
   return out.slice(0, limit);
 }
+
+// Estado para o tamagotchi: horas hoje/semana, ultimo evento, sessao aberta?
+export async function petState({ idleMinutes = 10 } = {}) {
+  const sessions = await collect();
+  const now = Date.now();
+  const lastEvent = sessions.reduce((m, s) => Math.max(m, s.ts[s.ts.length - 1]), 0);
+  const today = periodRange("today", now);
+  const week = periodRange("week", now);
+  const ivs = [];
+  for (const s of sessions) ivs.push(...toIntervals(s.ts, idleMinutes));
+  const merged = mergeIntervals(ivs);
+  const msToday = sumMs(clip(merged, today));
+  const msWeek = sumMs(clip(merged, week));
+  const byDay = splitByDay(clip(merged, [startOfDay(now) - 6 * 86400000, now]));
+  const dias = [];
+  for (let i = 6; i >= 0; i--) { const k = dayKey(startOfDay(now) - i * 86400000); dias.push({ dia: k.slice(5), horas: +((byDay[k] || 0) / 3600000).toFixed(2) }); }
+  const firstToday = sessions.flatMap((s) => s.ts).filter((t) => t >= today[0]).sort((a, b) => a - b)[0] || null;
+  return {
+    agora: new Date(now).toISOString(),
+    horasHoje: +(msToday / 3600000).toFixed(2),
+    horasSemana: +(msWeek / 3600000).toFixed(2),
+    hojeFmt: fmtH(msToday),
+    semanaFmt: fmtH(msWeek),
+    minutosDesdeUltimoEvento: lastEvent ? Math.round((now - lastEvent) / 60000) : null,
+    primeiroEventoHoje: firstToday ? new Date(firstToday).toISOString() : null,
+    ultimos7: dias,
+  };
+}

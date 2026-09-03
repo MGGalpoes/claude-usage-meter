@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Clauditchi</title>
+<style>
+  :root{
+    --bg1:#f6efe4; --bg2:#e9dfcf;
+    --shell:#f4d35e; --shell2:#e0b83a; --shell-shadow:#b58f1f;
+    --screen:#cfe3c3; --screen-dark:#94ab86; --ink:#2b3a2a;
+    --accent:#037545;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;display:grid;place-items:center;font-family:"Segoe UI",system-ui,sans-serif;
+       background:radial-gradient(circle at 30% 20%,var(--bg1),var(--bg2));color:var(--ink);transition:background 1.5s}
+  body.night{--bg1:#2a2f4a;--bg2:#141628}
+  body.evening{--bg1:#f7d9b8;--bg2:#e7b58f}
+  .device{position:relative;width:340px;height:450px;border-radius:170px 170px 150px 150px/200px 200px 170px 170px;
+          background:linear-gradient(160deg,var(--shell),var(--shell2));
+          box-shadow:0 30px 60px rgba(0,0,0,.25),inset 0 -10px 0 var(--shell-shadow),inset 0 6px 0 rgba(255,255,255,.45)}
+  .device::before{content:"";position:absolute;inset:14px;border-radius:inherit;border:3px solid rgba(255,255,255,.25);pointer-events:none}
+  .screen{position:absolute;left:50%;top:60px;transform:translateX(-50%);width:240px;height:262px;border-radius:26px;
+          background:var(--screen);box-shadow:inset 0 0 0 6px var(--screen-dark),inset 0 12px 24px rgba(0,0,0,.18);
+          overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:10px}
+  .screen .scan{position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(0,0,0,.05) 0 1px,transparent 1px 3px);pointer-events:none}
+  .mood{font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;opacity:.85;height:16px}
+  .pet{width:150px;height:130px;margin-top:2px}
+  .stats{display:flex;gap:14px;font-size:13px;font-weight:700;margin-top:2px}
+  .stats span small{display:block;font-size:9px;font-weight:500;letter-spacing:.1em;opacity:.7;text-align:center}
+  .energy{width:190px;height:9px;border-radius:5px;background:rgba(0,0,0,.14);margin-top:8px;overflow:hidden;box-shadow:inset 0 1px 2px rgba(0,0,0,.2)}
+  .energy i{display:block;height:100%;background:var(--accent);border-radius:5px;transition:width 1s,background 1s}
+  .bars{display:flex;gap:5px;align-items:flex-end;height:26px;margin-top:10px;margin-bottom:14px}
+  .bars b{width:18px;background:var(--ink);opacity:.35;border-radius:3px 3px 0 0;transition:height 1s;position:relative}
+  .bars b:last-child{opacity:.9;background:var(--accent)}
+  .bars b::after{content:attr(data-d);position:absolute;top:100%;left:50%;transform:translateX(-50%);font-size:7px;margin-top:2px;opacity:.8}
+  .buttons{position:absolute;bottom:48px;left:50%;transform:translateX(-50%);display:flex;gap:30px}
+  .buttons button{width:38px;height:38px;border-radius:50%;border:0;background:radial-gradient(circle at 35% 30%,#fff3,transparent 60%),#3b3b3b;
+                  box-shadow:0 4px 0 #1c1c1c,0 6px 10px rgba(0,0,0,.35);cursor:pointer;color:#ddd;font-size:14px}
+  .buttons button:active{transform:translateY(3px);box-shadow:0 1px 0 #1c1c1c}
+  .buttons button:nth-child(2){margin-top:12px}
+  .brand{position:absolute;bottom:18px;width:100%;text-align:center;font-size:10px;letter-spacing:.3em;font-weight:700;color:#7a5f14;opacity:.8}
+  .msg{position:absolute;top:26px;width:100%;text-align:center;font-size:11px;color:#6b520f;font-weight:600;opacity:.9}
+  .foot{margin-top:22px;font-size:12px;opacity:.55;text-align:center}
+  body.night .foot{color:#dfe3ff}
+
+  /* animações do bicho */
+  @keyframes bounce{0%,100%{transform:translateY(0) scale(1,1)}50%{transform:translateY(-8px) scale(.98,1.03)}}
+  @keyframes breathe{0%,100%{transform:scale(1,1)}50%{transform:scale(1.02,.97)}}
+  @keyframes wobble{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(2deg)}}
+  @keyframes sag{0%,100%{transform:translateY(4px) scale(1.04,.94)}50%{transform:translateY(6px) scale(1.06,.92)}}
+  @keyframes blink{0%,92%,100%{transform:scaleY(1)}96%{transform:scaleY(.1)}}
+  @keyframes zz{0%{opacity:0;transform:translate(0,0) scale(.6)}30%{opacity:1}100%{opacity:0;transform:translate(18px,-28px) scale(1.2)}}
+  @keyframes spark{0%,100%{opacity:0;transform:scale(.4)}50%{opacity:1;transform:scale(1)}}
+  @keyframes drop{0%{opacity:0;transform:translateY(-4px)}40%{opacity:1}100%{opacity:0;transform:translateY(14px)}}
+  .body{transform-origin:50% 100%}
+  .m-fresh .body{animation:bounce 1.1s ease-in-out infinite}
+  .m-ok .body{animation:breathe 2.4s ease-in-out infinite}
+  .m-mid .body{animation:breathe 3.2s ease-in-out infinite}
+  .m-tired .body{animation:sag 3.5s ease-in-out infinite}
+  .m-dead .body{animation:wobble 2.6s ease-in-out infinite}
+  .m-sleep .body{animation:breathe 4s ease-in-out infinite}
+  .eyes{transform-origin:50% 50%;animation:blink 4s infinite}
+  .zz{animation:zz 2.4s ease-out infinite}
+  .zz.z2{animation-delay:.8s}.zz.z3{animation-delay:1.6s}
+  .spark{animation:spark 1.6s ease-in-out infinite}
+  .spark.s2{animation-delay:.5s}.spark.s3{animation-delay:1s}
+  .drop{animation:drop 2s ease-in infinite}
+  .hidden{display:none}
+</style>
+</head>
+<body>
+<div>
+<div class="device">
+  <div class="msg" id="msg">carregando…</div>
+  <div class="screen">
+    <div class="scan"></div>
+    <div class="mood" id="mood">…</div>
+    <svg class="pet" id="pet" viewBox="0 0 150 130">
+      <g class="body">
+        <ellipse cx="75" cy="122" rx="40" ry="5" fill="rgba(0,0,0,.15)"/>
+        <path id="shape" d="M75 18c30 0 52 24 52 54 0 28-22 46-52 46S23 100 23 72c0-30 22-54 52-54z" fill="#4fbf7a" stroke="#2b3a2a" stroke-width="3"/>
+        <path d="M60 22c8-9 22-9 30 0" fill="none" stroke="#2b3a2a" stroke-width="3" stroke-linecap="round"/>
+        <!-- bochechas -->
+        <circle cx="46" cy="82" r="6" fill="#ff8fa3" opacity=".7"/><circle cx="104" cy="82" r="6" fill="#ff8fa3" opacity=".7"/>
+        <!-- olhos -->
+        <g class="eyes" id="eyes-open"><circle cx="57" cy="66" r="7" fill="#2b3a2a"/><circle cx="93" cy="66" r="7" fill="#2b3a2a"/>
+          <circle cx="59.5" cy="63" r="2.5" fill="#fff"/><circle cx="95.5" cy="63" r="2.5" fill="#fff"/></g>
+        <g id="eyes-half" class="hidden"><path d="M49 66h16" stroke="#2b3a2a" stroke-width="4" stroke-linecap="round"/><path d="M85 66h16" stroke="#2b3a2a" stroke-width="4" stroke-linecap="round"/>
+          <circle cx="57" cy="69" r="5" fill="#2b3a2a"/><circle cx="93" cy="69" r="5" fill="#2b3a2a"/>
+          <rect x="48" y="58" width="18" height="9" fill="#4fbf7a" id="lid1"/><rect x="84" y="58" width="18" height="9" fill="#4fbf7a" id="lid2"/></g>
+        <g id="eyes-closed" class="hidden"><path d="M49 66q8 6 16 0" fill="none" stroke="#2b3a2a" stroke-width="3.5" stroke-linecap="round"/><path d="M85 66q8 6 16 0" fill="none" stroke="#2b3a2a" stroke-width="3.5" stroke-linecap="round"/></g>
+        <g id="eyes-x" class="hidden" stroke="#2b3a2a" stroke-width="3.5" stroke-linecap="round"><path d="M51 60l12 12M63 60L51 72M87 60l12 12M99 60L87 72"/></g>
+        <!-- bocas -->
+        <path id="mouth-smile" d="M62 88q13 12 26 0" fill="none" stroke="#2b3a2a" stroke-width="3" stroke-linecap="round"/>
+        <path id="mouth-flat" class="hidden" d="M64 90h22" fill="none" stroke="#2b3a2a" stroke-width="3" stroke-linecap="round"/>
+        <path id="mouth-wavy" class="hidden" d="M62 91q6-6 12 0t12 0" fill="none" stroke="#2b3a2a" stroke-width="3" stroke-linecap="round"/>
+        <path id="mouth-open" class="hidden" d="M66 86q9 12 18 0z" fill="#2b3a2a"/>
+        <path id="tongue" class="hidden" d="M70 90q5 8 10 0z" fill="#ff8fa3"/>
+        <!-- gota de suor -->
+        <path id="sweat" class="drop hidden" d="M112 52q6 8 0 12q-6-4 0-12z" fill="#7cc7ff" stroke="#2b3a2a" stroke-width="1.5"/>
+      </g>
+      <!-- efeitos -->
+      <g id="fx-spark" class="hidden" fill="#fff7a8" stroke="#d9a400" stroke-width="1">
+        <path class="spark" d="M20 30l3 7 7 3-7 3-3 7-3-7-7-3 7-3z"/><path class="spark s2" d="M128 24l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/><path class="spark s3" d="M120 100l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/>
+      </g>
+      <g id="fx-zz" class="hidden" font-family="Segoe UI,sans-serif" font-weight="800" fill="#2b3a2a">
+        <text class="zz" x="112" y="50" font-size="14">z</text><text class="zz z2" x="112" y="50" font-size="18">Z</text><text class="zz z3" x="112" y="50" font-size="22">Z</text>
+      </g>
+    </svg>
+    <div class="stats">
+      <span><small>HOJE</small><span id="hoje">–</span></span>
+      <span><small>SEMANA</small><span id="semana">–</span></span>
+      <span><small>ENERGIA</small><span id="energia">–</span></span>
+    </div>
+    <div class="energy"><i id="ebar" style="width:100%"></i></div>
+    <div class="bars" id="bars"></div>
+  </div>
+  <div class="buttons">
+    <button title="anterior (demo)" onclick="demoStep(-1)">◀</button>
+    <button title="atualizar" onclick="load()">●</button>
+    <button title="próximo (demo)" onclick="demoStep(1)">▶</button>
+  </div>
+  <div class="brand">CLAUDITCHI</div>
+</div>
+<div class="foot" id="foot">medindo Claude Code + Codex nesta máquina</div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const show=(ids,on)=>ids.forEach(i=>$(i).classList.toggle('hidden',!on));
+const MOODS=[
+ {k:'fresh',max:1,  label:'Disposto!',   color:'#4fbf7a',msg:'Bom dia! Bora fazer coisa boa.'},
+ {k:'ok',   max:3,  label:'No ritmo',    color:'#57b87c',msg:'Fluindo bem. Bebe uma água.'},
+ {k:'mid',  max:5,  label:'Meio cansado',color:'#79b56d',msg:'Já são {h}. Um alongamento cai bem.'},
+ {k:'tired',max:7,  label:'Cansado',     color:'#a3ad5c',msg:'Pesado hein. Que tal uma pausa de 15 min?'},
+ {k:'dead', max:99, label:'Exausto',     color:'#b98f5e',msg:'{h} hoje. Vai descansar, o código fica pra amanhã.'},
+];
+const SLEEP={k:'sleep',label:'Dormindo',color:'#6fa5b8',msg:'Sem atividade há {m} min. Zzz…'};
+let demo=null, demoIdx=-1;
+const DEMO=[{h:0.2,idle:0},{h:2,idle:0},{h:4,idle:0},{h:6,idle:0},{h:8.5,idle:0},{h:3,idle:45}];
+function demoStep(d){demoIdx=(demoIdx+d+DEMO.length)%DEMO.length;demo=DEMO[demoIdx];render(lastState||{});}
+const fmt=h=>`${Math.floor(h)}h${String(Math.round((h%1)*60)).padStart(2,'0')}`;
+let lastState=null;
+function render(s){
+  lastState=s;
+  const h=demo?demo.h:(s.horasHoje||0);
+  const idle=demo?demo.idle:(s.minutosDesdeUltimoEvento??999);
+  const hour=new Date().getHours();
+  let m = (idle>30 && (h>0 || hour<7)) ? SLEEP : MOODS.find(x=>h<x.max);
+  const pet=$('pet'); pet.className.baseVal='pet m-'+m.k;
+  $('mood').textContent=m.label;
+  $('msg').textContent=(demo?'[demo] ':'')+m.msg.replace('{h}',fmt(h)).replace('{m}',idle);
+  $('shape').setAttribute('fill',m.color); $('lid1').setAttribute('fill',m.color); $('lid2').setAttribute('fill',m.color);
+  show(['eyes-open','eyes-half','eyes-closed','eyes-x','mouth-smile','mouth-flat','mouth-wavy','mouth-open','tongue','sweat','fx-spark','fx-zz'],false);
+  const on={fresh:['eyes-open','mouth-open','fx-spark'],ok:['eyes-open','mouth-smile'],mid:['eyes-half','mouth-flat'],
+            tired:['eyes-half','mouth-wavy','sweat'],dead:['eyes-x','tongue','mouth-flat','sweat'],sleep:['eyes-closed','mouth-smile','fx-zz']}[m.k];
+  show(on,true);
+  const energy=Math.max(0,Math.round(100-(h/8)*100));
+  $('energia').textContent=energy+'%';
+  const eb=$('ebar'); eb.style.width=energy+'%'; eb.style.background=energy>50?'#037545':energy>25?'#d9a400':'#c0392b';
+  $('hoje').textContent=fmt(h); $('semana').textContent=s.semanaFmt||'–';
+  const bars=$('bars'); bars.innerHTML='';
+  const mx=Math.max(1,...(s.ultimos7||[]).map(d=>d.horas));
+  (s.ultimos7||[]).forEach(d=>{const b=document.createElement('b');b.style.height=Math.max(2,d.horas/mx*26)+'px';b.dataset.d=d.dia.slice(3);b.title=d.dia+' · '+fmt(d.horas);bars.appendChild(b)});
+  document.body.className = hour>=20||hour<6 ? 'night' : hour>=17 ? 'evening' : '';
+  $('foot').textContent=`atualizado ${new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})} · pausa >10 min não conta · ◀ ▶ = demo`;
+}
+async function load(){
+  try{const r=await fetch('/api/state');render(await r.json());}
+  catch(e){$('msg').textContent='sem conexão com o medidor';}
+}
+const q=new URLSearchParams(location.search);
+if(q.has('demo')){demo={h:+q.get('demo'),idle:+(q.get('idle')||0)};}
+load(); setInterval(load,30000);
+</script>
+</body>
+</html>

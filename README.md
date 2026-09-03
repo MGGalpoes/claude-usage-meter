@@ -45,6 +45,25 @@ Periodo: week  (2026-08-31 -> 2026-09-03), ocioso > 10 min encerra bloco
   TOTAL      8h30  (soma simples 8h30, sobreposicao 0h00)
 ```
 
+## Clauditchi (tamagotchi)
+
+Um bichinho que muda de humor conforme as horas do dia:
+
+| Horas hoje | Humor |
+|---|---|
+| < 1h | Disposto (pulando, brilhinhos) |
+| 1–3h | No ritmo |
+| 3–5h | Meio cansado (olhos caídos) |
+| 5–7h | Cansado (suando) |
+| ≥ 7h | Exausto (olhos em X) |
+| sem atividade > 30 min | Dormindo (zzz) |
+
+```bash
+node index.js serve          # abre em http://localhost:4242
+```
+
+Barra de energia, horas de hoje e da semana, últimos 7 dias. Os botões ◀ ▶ (ou `?demo=6`) mostram os humores sem esperar as horas passarem. Atualiza sozinho a cada 30 s.
+
 ## Ferramentas MCP
 
 | Tool | Parâmetros | Retorna |

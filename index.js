@@ -3,7 +3,11 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
-import { summary, daily, recentSessions } from "./meter.js";
+import { summary, daily, recentSessions, petState } from "./meter.js";
+import http from "node:http";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 const PERIODS = ["today", "yesterday", "week", "7d", "month", "30d", "all"];
 const TOOLS = ["claude", "codex", "both"];
@@ -20,6 +24,23 @@ if (process.argv[2] === "report") {
   for (const r of await daily({ days: 14 })) console.log(`  ${r.dia}  claude ${r.claude.padStart(6)}  codex ${r.codex.padStart(6)}  total ${r.total.padStart(6)}`);
   process.exit(0);
 }
+
+if (process.argv[2] === "serve") {
+  const port = Number(process.argv[3] || 4242);
+  const here = path.dirname(fileURLToPath(import.meta.url));
+  const html = path.join(here, "web", "index.html");
+  http.createServer(async (req, res) => {
+    try {
+      if (req.url.startsWith("/api/state")) {
+        res.writeHead(200, { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" });
+        res.end(JSON.stringify(await petState()));
+      } else {
+        res.writeHead(200, { "content-type": "text/html; charset=utf-8" });
+        res.end(fs.readFileSync(html));
+      }
+    } catch (e) { res.writeHead(500); res.end(String(e)); }
+  }).listen(port, "127.0.0.1", () => console.log(`Tamagotchi em http://localhost:${port}`));
+} else {
 
 const server = new McpServer({ name: "claude-usage-meter", version: "1.0.0" });
 
@@ -45,3 +66,4 @@ server.tool(
 );
 
 await server.connect(new StdioServerTransport());
+}
