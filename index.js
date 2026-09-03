@@ -57,7 +57,7 @@ if (process.argv[2] === "serve") {
         const file = path.join(here, "web", rel);
         if (!fs.existsSync(file)) { res.writeHead(404); return res.end("not found"); }
         const ext = path.extname(file).toLowerCase();
-        res.writeHead(200, { "content-type": ext === ".png" ? "image/png" : ext === ".webp" ? "image/webp" : "image/jpeg", "cache-control": "max-age=60" });
+        res.writeHead(200, { "content-type": ext === ".png" ? "image/png" : ext === ".webp" ? "image/webp" : "image/jpeg", "cache-control": "no-cache" });
         res.end(fs.readFileSync(file));
       } else {
         res.writeHead(200, { "content-type": "text/html; charset=utf-8" });
