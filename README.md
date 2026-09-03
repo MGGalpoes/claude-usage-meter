@@ -64,6 +64,8 @@ node index.js serve          # abre em http://localhost:4242
 
 Barra de energia, horas de hoje e da semana, últimos 7 dias. Os botões ◀ ▶ (ou `?demo=6`) mostram os humores sem esperar as horas passarem. Atualiza sozinho a cada 30 s.
 
+**Personalização (⚙️ no canto):** nome, formato do corpo (redondo, gota, quadrado, gato, robô), cor das bochechas, cores da carcaça, tela e destaque, tema do fundo (automático pela hora, claro, entardecer, noite), meta de horas do dia, minutos parado até dormir, pausa que encerra bloco, ferramentas medidas, e para cada humor: cor, rótulo, limite de horas e mensagem (`{h}` = horas, `{m}` = minutos parado). Preview ao vivo; salva no navegador; exporta/importa JSON.
+
 ## Ferramentas MCP
 
 | Tool | Parâmetros | Retorna |

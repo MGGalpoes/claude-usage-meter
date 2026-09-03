@@ -237,8 +237,8 @@ export async function recentSessions({ limit = 15, tools = ["claude", "codex"], 
 }
 
 // Estado para o tamagotchi: horas hoje/semana, ultimo evento, sessao aberta?
-export async function petState({ idleMinutes = 10 } = {}) {
-  const sessions = await collect();
+export async function petState({ idleMinutes = 10, tools = ["claude", "codex"] } = {}) {
+  const sessions = (await collect()).filter((s) => tools.includes(s.tool));
   const now = Date.now();
   const lastEvent = sessions.reduce((m, s) => Math.max(m, s.ts[s.ts.length - 1]), 0);
   const today = periodRange("today", now);

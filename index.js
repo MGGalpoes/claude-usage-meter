@@ -32,8 +32,11 @@ if (process.argv[2] === "serve") {
   http.createServer(async (req, res) => {
     try {
       if (req.url.startsWith("/api/state")) {
+        const u = new URL(req.url, "http://x");
+        const idle = Math.min(120, Math.max(1, Number(u.searchParams.get("idle")) || 10));
+        const tool = u.searchParams.get("tool");
         res.writeHead(200, { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" });
-        res.end(JSON.stringify(await petState()));
+        res.end(JSON.stringify(await petState({ idleMinutes: idle, tools: pick(TOOLS.includes(tool) ? tool : "both") })));
       } else {
         res.writeHead(200, { "content-type": "text/html; charset=utf-8" });
         res.end(fs.readFileSync(html));
