@@ -66,6 +66,12 @@ Barra de energia, horas de hoje e da semana, últimos 7 dias. Os botões ◀ ▶
 
 **Personalização (⚙️ no canto):** nome, formato do corpo (redondo, gota, quadrado, gato, robô), cor das bochechas, cores da carcaça, tela e destaque, tema do fundo (automático pela hora, claro, entardecer, noite), meta de horas do dia, minutos parado até dormir, pausa que encerra bloco, ferramentas medidas, e para cada humor: cor, rótulo, limite de horas e mensagem (`{h}` = horas, `{m}` = minutos parado). Preview ao vivo; salva no navegador; exporta/importa JSON.
 
+**Skins com imagem (personagem do zero):** em vez do desenho, o bichinho pode ser um conjunto de 6 imagens (uma por humor). Duas formas:
+- pasta `web/skins/<nome>/` com `fresh.png`, `ok.png`, `mid.png`, `tired.png`, `dead.png`, `sleep.png` (aparece no seletor "Skin");
+- "Minhas imagens" no painel: envia as 6 pelo navegador, ficam só no localStorage.
+
+Para gerar a partir da foto de alguém, use um modelo de edição por referência (ex.: Flux.2 Klein 4B local via Wan2GP, roda numa RTX 4060 em ~13 s por imagem) com prompts de expressão por humor. As pastas de skin ficam fora do git.
+
 ## Ferramentas MCP
 
 | Tool | Parâmetros | Retorna |

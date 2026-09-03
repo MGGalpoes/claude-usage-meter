@@ -27,6 +27,13 @@
   .screen .scan{position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(0,0,0,.05) 0 1px,transparent 1px 3px);pointer-events:none}
   .mood{font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;opacity:.85;height:16px}
   .pet{width:150px;height:130px;margin-top:2px}
+  #skinpet{display:flex;align-items:flex-end;justify-content:center;flex:none}
+  #skinpet.hidden,svg.pet.hidden{display:none}
+  .pet{flex:none}
+  #skinpet img{width:140px;height:140px;object-fit:contain;border-radius:20px;display:block}
+  .skin-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:6px}
+  .skin-grid label{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;cursor:pointer;opacity:.85}
+  .skin-grid img{width:60px;height:60px;object-fit:cover;border-radius:10px;background:#0001;border:1px dashed #0003}
   .stats{display:flex;gap:14px;font-size:13px;font-weight:700;margin-top:2px}
   .stats span small{display:block;font-size:9px;font-weight:500;letter-spacing:.1em;opacity:.7;text-align:center}
   .energy{width:190px;height:9px;border-radius:5px;background:rgba(0,0,0,.14);margin-top:8px;overflow:hidden;box-shadow:inset 0 1px 2px rgba(0,0,0,.2)}
@@ -137,6 +144,7 @@
         <text class="zz" x="112" y="50" font-size="14">z</text><text class="zz z2" x="112" y="50" font-size="18">Z</text><text class="zz z3" x="112" y="50" font-size="22">Z</text>
       </g>
     </svg>
+    <div id="skinpet" class="pet hidden"><img id="skinimg" class="body" alt=""></div>
     <div class="stats">
       <span><small>HOJE</small><span id="hoje">–</span></span>
       <span><small>SEMANA</small><span id="semana">–</span></span>
@@ -161,6 +169,8 @@
 
   <h3>Identidade</h3>
   <div class="row"><label>Nome do bichinho</label><input type="text" id="c-name"></div>
+  <div class="row"><label>Skin (visual)</label><select id="c-skin"><option value="svg">Desenho (padrão)</option></select></div>
+  <div id="skin-custom" class="hidden"><div class="hint">Minhas imagens: uma por humor (quadradas). Ficam só neste navegador.</div><div class="skin-grid" id="skin-grid"></div></div>
   <div class="row"><label>Formato do corpo</label><select id="c-shape">
     <option value="round">Redondo</option><option value="drop">Gota</option><option value="square">Quadradão</option><option value="cat">Gato</option><option value="robot">Robô</option></select></div>
   <div class="row"><label>Bochechas</label><input type="color" id="c-cheek"></div>
@@ -204,7 +214,7 @@ const SHAPES={
   robot:'M31 30h88q10 0 10 10v66q0 12-12 12H33q-12 0-12-12V40q0-10 10-10z',
 };
 const DEFAULTS={
-  name:'Clauditchi', shape:'round', cheek:'#ff8fa3', anim:'on',
+  name:'Clauditchi', skin:'svg', customSkin:{}, shape:'round', cheek:'#ff8fa3', anim:'on',
   shell:'#f4d35e', screen:'#cfe3c3', accent:'#037545', theme:'auto',
   goal:8, sleep:30, idle:10, tool:'both',
   moods:[
@@ -255,6 +265,11 @@ function render(s){
   const M=cfg.moods;
   let m = (idle>cfg.sleep && (h>0 || hour<7)) ? M[5] : (M.slice(0,4).find(x=>h<x.max) || M[4]);
   $('pet').className.baseVal='pet m-'+m.k+(cfg.anim==='off'?' no-anim':'');
+  const src = cfg.skin==='svg' ? null : cfg.skin==='custom' ? (cfg.customSkin||{})[m.k] : `/skins/${encodeURIComponent(cfg.skin)}/${m.k}.png`;
+  $('skinpet').className='pet m-'+m.k+(cfg.anim==='off'?' no-anim':'')+(src?'':' hidden');
+  $('pet').classList.toggle('hidden',!!src);
+  if(src && $('skinimg').getAttribute('src')!==src) $('skinimg').src=src;
+  $('skinimg').onerror=()=>{$('skinpet').classList.add('hidden');$('pet').classList.remove('hidden');};
   $('mood').textContent=m.label;
   $('msg').textContent=(demo?'[demo] ':'')+m.msg.replace('{h}',fmt(h)).replace('{m}',idle);
   ['shape','lid1','lid2'].forEach(i=>$(i).setAttribute('fill',m.color)); $('ears').setAttribute('fill',m.color);
@@ -285,11 +300,25 @@ function fillPanel(){
     <input class="wide" type="text" data-i="${i}" data-f="msg" value="${m.msg.replace(/"/g,'&quot;')}" placeholder="mensagem"></div>`).join('');
 }
 function readPanel(){
-  ['name','shape','cheek','anim','shell','screen','accent','theme','tool'].forEach(k=>cfg[k]=$('c-'+k).value);
+  ['name','skin','shape','cheek','anim','shell','screen','accent','theme','tool'].forEach(k=>cfg[k]=$('c-'+k).value);
   ['goal','sleep','idle'].forEach(k=>cfg[k]=+$('c-'+k).value||DEFAULTS[k]);
   $('moods').querySelectorAll('input').forEach(el=>{const m=cfg.moods[+el.dataset.i];m[el.dataset.f]=el.dataset.f==='max'?+el.value:el.value;});
 }
-$('gear').onclick=()=>{$('panel').classList.toggle('open');fillPanel();};
+const MOOD_KEYS=['fresh','ok','mid','tired','dead','sleep'];
+async function fillSkins(){
+  let list=[]; try{list=await (await fetch('/api/skins')).json();}catch{}
+  const sel=$('c-skin'); sel.innerHTML='<option value="svg">Desenho (padrão)</option>'+list.map(n=>`<option value="${n}">${n}</option>`).join('')+'<option value="custom">Minhas imagens</option>';
+  sel.value=cfg.skin||'svg'; if(sel.value!==cfg.skin) sel.value='svg';
+  $('skin-custom').classList.toggle('hidden',cfg.skin!=='custom');
+  $('skin-grid').innerHTML=MOOD_KEYS.map(k=>`<label><img src="${cfg.customSkin?.[k]||''}" id="cs-${k}"><span>${MOOD_TITLES[k]}</span><input type="file" accept="image/*" data-k="${k}" hidden></label>`).join('');
+  $('skin-grid').querySelectorAll('input[type=file]').forEach(inp=>inp.onchange=async e=>{
+    const f=e.target.files[0]; if(!f) return;
+    const url=await new Promise(r=>{const img=new Image();img.onload=()=>{const c=document.createElement('canvas');c.width=c.height=256;const x=c.getContext('2d');const m=Math.min(img.width,img.height);x.drawImage(img,(img.width-m)/2,(img.height-m)/2,m,m,0,0,256,256);r(c.toDataURL('image/webp',.85));};img.src=URL.createObjectURL(f);});
+    cfg.customSkin=cfg.customSkin||{}; cfg.customSkin[inp.dataset.k]=url; $('cs-'+inp.dataset.k).src=url; render(lastState||{});
+  });
+}
+$('c-skin').addEventListener('change',()=>{cfg.skin=$('c-skin').value;$('skin-custom').classList.toggle('hidden',cfg.skin!=='custom');});
+$('gear').onclick=()=>{$('panel').classList.toggle('open');fillPanel();fillSkins();};
 $('panel').addEventListener('input',()=>{readPanel();render(lastState||{});});   // preview ao vivo
 $('b-save').onclick=()=>{readPanel();saveCfg();load();$('b-save').textContent='Salvo ✓';setTimeout(()=>$('b-save').textContent='Salvar',1200);};
 $('b-reset').onclick=()=>{cfg=JSON.parse(JSON.stringify(DEFAULTS));saveCfg();fillPanel();load();};

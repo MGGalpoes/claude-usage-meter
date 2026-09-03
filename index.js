@@ -37,6 +37,18 @@ if (process.argv[2] === "serve") {
         const tool = u.searchParams.get("tool");
         res.writeHead(200, { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" });
         res.end(JSON.stringify(await petState({ idleMinutes: idle, tools: pick(TOOLS.includes(tool) ? tool : "both") })));
+      } else if (req.url.startsWith("/api/skins")) {
+        const dir = path.join(here, "web", "skins");
+        const skins = fs.existsSync(dir) ? fs.readdirSync(dir, { withFileTypes: true }).filter((d) => d.isDirectory()).map((d) => d.name) : [];
+        res.writeHead(200, { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" });
+        res.end(JSON.stringify(skins));
+      } else if (req.url.startsWith("/skins/")) {
+        const rel = decodeURIComponent(req.url.split("?")[0]).replace(/\.\./g, "");
+        const file = path.join(here, "web", rel);
+        if (!fs.existsSync(file)) { res.writeHead(404); return res.end("not found"); }
+        const ext = path.extname(file).toLowerCase();
+        res.writeHead(200, { "content-type": ext === ".png" ? "image/png" : ext === ".webp" ? "image/webp" : "image/jpeg", "cache-control": "max-age=60" });
+        res.end(fs.readFileSync(file));
       } else {
         res.writeHead(200, { "content-type": "text/html; charset=utf-8" });
         res.end(fs.readFileSync(html));
