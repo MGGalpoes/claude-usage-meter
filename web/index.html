@@ -217,7 +217,7 @@
 
   <h3>Humores</h3>
   <div id="moods"></div>
-  <div class="hint">"até X h" é o limite superior de cada humor. Use {h} para as horas e {m} para os minutos parado nas mensagens.</div>
+  <div class="hint">"até X h" é o limite superior de cada humor. Use {h} para as horas e {m} para os minutos parado. Várias frases separadas por | são sorteadas.</div>
 
   <div class="actions">
     <button class="primary" id="b-save">Salvar</button>
@@ -298,7 +298,9 @@ function render(s){
   if(src && $('skinimg').getAttribute('src')!==src) $('skinimg').src=src;
   $('skinimg').onerror=()=>{$('skinpet').classList.add('hidden');$('pet').classList.remove('hidden');};
   $('mood').textContent=m.label;
-  $('msg').textContent=(demo?'[demo] ':'')+m.msg.replace('{h}',fmt(h)).replace('{m}',idle);
+  const opts=String(m.msg).split('|').map(x=>x.trim()).filter(Boolean); const slot=Math.floor(Date.now()/600000)+m.k.length;
+  const frase=opts.length?opts[slot%opts.length]:'';
+  $('msg').textContent=(demo?'[demo] ':'')+frase.replace('{h}',fmt(h)).replace('{m}',idle);
   if(WIDGET){$('m-mood').textContent=m.label;$('m-msg').textContent=$('msg').textContent;}
   ['shape','lid1','lid2'].forEach(i=>$(i).setAttribute('fill',m.color)); $('ears').setAttribute('fill',m.color);
   show(['eyes-open','eyes-half','eyes-closed','eyes-x','mouth-smile','mouth-flat','mouth-wavy','mouth-open','tongue','sweat','fx-spark','fx-zz'],false);
@@ -366,7 +368,7 @@ if(WIDGET){document.body.classList.add('widget');
   document.querySelector('.screen').addEventListener('dblclick',()=>{if(window.widgetApi) widgetApi.openSettings(); else window.open(location.origin,'_blank');});
 }
 if(q.has('demo')){demo={h:+q.get('demo'),idle:+(q.get('idle')||0)};}
-applyTheme(); loadCfgServer().then(()=>{applyTheme();load();}); setInterval(load,30000);
+applyTheme(); loadCfgServer().then(()=>{applyTheme();load();}); setInterval(load,30000); setInterval(()=>{if(!$('panel').classList.contains('open')) loadCfgServer().then(applyTheme);},60000);
 </script>
 </body>
 </html>
